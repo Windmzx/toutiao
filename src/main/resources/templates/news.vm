@@ -1,0 +1,46 @@
+<html>
+
+<head>
+    vm templement
+</head>
+<body>
+<pre>
+
+    $!{par1}
+
+    #foreach ($color in $colors)
+        Color $!{foreach.index}/$!{foreach.count}: $!{color}
+    #end
+
+    keyset
+    #foreach($key in $map.keySet())
+        ${key}:$map.get($key)
+    #end
+
+    entry
+    #foreach($kv in $map.entrySet())
+        key:${kv.key}  value${kv.value}
+    #end
+
+
+    ${user.name}
+
+    Include: #include("header.vm")
+    Parse: #parse("header.vm")
+
+
+    #macro(render_color $color,$index)
+        Color: $index $color
+    #end
+</pre>
+
+
+    #foreach($color in $colors)
+        #render_color($color,$foreach.index)<br>
+    #end
+
+
+</body>
+
+
+</html>
