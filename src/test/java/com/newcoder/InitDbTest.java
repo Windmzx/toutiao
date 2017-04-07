@@ -1,7 +1,9 @@
 package com.newcoder;
 
+import com.newcoder.dao.LoginTicketDAO;
 import com.newcoder.dao.NewsDAO;
 import com.newcoder.dao.UserDAO;
+import com.newcoder.model.LoginTicket;
 import com.newcoder.model.News;
 import com.newcoder.model.User;
 import org.junit.Assert;
@@ -30,6 +32,9 @@ public class InitDbTest {
     @Autowired
     NewsDAO newsDAO;
 
+    @Autowired
+    LoginTicketDAO loginTicketDAO;
+
     @Test
     public void contextLoads() {
         Random r = new Random();
@@ -47,7 +52,7 @@ public class InitDbTest {
             date.setTime(date.getTime() + 1000 * 3600 * 5 * i);
             news.setCreatedDate(date);
 
-            Random random=new Random();
+            Random random = new Random();
             news.setImage(String.format("http://images.nowcoder.com/head/%dm.png", random.nextInt(1000)));
             news.setLikeCount(i + 1);
             news.setUserId(i + 1);
@@ -59,10 +64,24 @@ public class InitDbTest {
             user.setPassword("newpassword");
             userDAO.updatepassword(user);
 
+
+            LoginTicket loginTicket = new LoginTicket();
+            loginTicket.setExpired(new Date());
+            loginTicket.setStatus(0);
+            loginTicket.setTicket(String.format("abcdefg%d", i));
+            loginTicket.setUserId(i);
+            loginTicketDAO.insert(loginTicket);
+
         }
+
+        LoginTicket loginTicket = loginTicketDAO.selectByTicket("abcdefg2");
+        loginTicket.setStatus(2);
+        loginTicketDAO.upDateStatus(loginTicket.getTicket(),loginTicket.getStatus());
 
         Assert.assertEquals("newpassword", userDAO.selectById(1).getPassword());
         userDAO.deleteById(1);
         Assert.assertNull(userDAO.selectById(1));
+        Assert.assertEquals("abcdefg2",loginTicketDAO.selectByTicket("abcdefg2").getTicket());
+
     }
 }

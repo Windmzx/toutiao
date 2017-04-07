@@ -1,46 +1,55 @@
 <html>
-
-<head>
-    vm templement
-</head>
 <body>
 <pre>
+Hello VM.
 
-    $!{par1}
+## 你看不到我
 
-    #foreach ($color in $colors)
-        Color $!{foreach.index}/$!{foreach.count}: $!{color}
-    #end
+#*
+这里都看不到
+*#
 
-    keyset
-    #foreach($key in $map.keySet())
-        ${key}:$map.get($key)
-    #end
+value1:$!{value1}
+$!{value2}
+${value3}
 
-    entry
-    #foreach($kv in $map.entrySet())
-        key:${kv.key}  value${kv.value}
-    #end
+#foreach ($color in $colors)
+Color $!{foreach.index}/$!{foreach.count}: $!{color}
+#end
+
+#foreach($key in $map.keySet())
+Number $!{foreach.index}/$!{foreach.count}: $!{key} $map.get($key)
+#end
+
+#foreach($kv in $map.entrySet())
+Number $!{foreach.index}/$!{foreach.count}: $!{kv.key} $!{kv.value}
+#end
 
 
-    ${user.name}
+User:$!{user.name}
+User:$!{user.getName()}
 
-    Include: #include("header.vm")
-    Parse: #parse("header.vm")
+#set($title = "nowcoder")
+Include: #include("header.vm") <br>
+Parse:#parse("header.vm")
 
+#macro (render_color, $color, $index)
+Color By Macro $index, $color
+#end
 
-    #macro(render_color $color,$index)
-        Color: $index $color
-    #end
+#foreach ($color in $colors)
+    #render_color($color, $foreach.index)
+#end
+
+#set($hello = "hello")
+#set($hworld1 = "$!{hello} world")
+#set($hworld2 = '$!{hello} world')
+
+hworld1:$hworld1
+hworld2:$hworld2
+
+$!{colors.size()}
+
 </pre>
-
-
-    #foreach($color in $colors)
-        #render_color($color,$foreach.index)<br>
-    #end
-
-
 </body>
-
-
 </html>

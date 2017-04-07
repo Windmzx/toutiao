@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 /**
@@ -22,16 +25,20 @@ public class RegisterController {
 
 
     @ResponseBody
-    @RequestMapping(path = "/register",method ={RequestMethod.GET,RequestMethod.POST})
+    @RequestMapping(path = "/register", method = {RequestMethod.GET, RequestMethod.POST})
     public String register(@RequestParam("username") String username,
                            @RequestParam("password") String password,
-                           @RequestParam(value = "rember",defaultValue = "0") String rember) {
+                           @RequestParam(value = "rember", defaultValue = "0") int rember,
+                           HttpServletResponse response) {
 
         try {
-            Map<String, Object> map =userService.register(username,password);
-            if (map.isEmpty()){
-                return ServiceUtil.getJson(0,"注册成功");
-            }else {
+            Map<String, Object> map = userService.register(username, password, rember);
+            if (map.containsKey("ticket")) {
+                Cookie cookie = new Cookie("ticket", map.get("ticket").toString());
+                cookie.setPath("/");
+                response.addCookie(cookie);
+                return ServiceUtil.getJson(0, "注册成功");
+            } else {
                 return ServiceUtil.getJson(1, map);
             }
         } catch (Exception e) {
