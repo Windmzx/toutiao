@@ -5,12 +5,11 @@ import com.newcoder.dao.LoginTicketDAO;
 import com.newcoder.dao.UserDAO;
 import com.newcoder.model.LoginTicket;
 import com.newcoder.model.User;
-import com.newcoder.utils.ServiceUtil;
+import com.newcoder.utils.ToutiaoUtil;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sun.security.krb5.internal.Ticket;
 
 import java.util.Date;
 import java.util.Map;
@@ -38,19 +37,19 @@ public class UserService {
         Map<String, Object> map = new HashedMap();
 
         if (StringUtils.isEmpty(username)) {
-            map.put("msg", "用户名不能为空");
+            map.put("msgname", "用户名不能为空");
             return map;
 
         }
 
         if (StringUtils.isEmpty(password)) {
-            map.put("msg", "密码不能为空");
+            map.put("msgpwd", "密码不能为空");
             return map;
 
         }
         User user = userDAO.selectByName(username);
         if (user != null) {
-            map.put("msg", "用户名已经被注册");
+            map.put("msgname", "用户名已经被注册");
             return map;
         }
 
@@ -59,7 +58,7 @@ public class UserService {
         Random r = new Random();
         user.setHeadUrl(String.format("http://images.newcoder.com/head/%dt.png", r.nextInt(1000)));
         user.setSalt(UUID.randomUUID().toString().substring(1, 5));
-        user.setPassword(ServiceUtil.MD5(password + user.getSalt()));
+        user.setPassword(ToutiaoUtil.MD5(password + user.getSalt()));
 
         userDAO.addUser(user);
 
@@ -84,24 +83,24 @@ public class UserService {
         Map<String, Object> map = new HashedMap();
 
         if (StringUtils.isEmpty(username)) {
-            map.put("msg", "用户名不能为空");
+            map.put("msgname", "用户名不能为空");
             return map;
 
         }
 
         if (StringUtils.isEmpty(password)) {
-            map.put("msg", "密码不能为空");
+            map.put("msgpwd", "密码不能为空");
             return map;
 
         }
         User user = userDAO.selectByName(username);
         //查询不到用户提供的用户名 为了保证安全,统一返回不正确
         if (user == null) {
-            map.put("msg", "用户名密码不正确");
+            map.put("msgpwd", "用户名密码不正确");
             return map;
         }
         //验证密码
-        if (ServiceUtil.MD5(password + user.getSalt()).equals(user.getPassword())) {
+        if (ToutiaoUtil.MD5(password + user.getSalt()).equals(user.getPassword())) {
             //密码正确 生成ticket
 
 
@@ -119,7 +118,7 @@ public class UserService {
 
             map.put("ticket", ticket.getTicket());
         } else {
-            map.put("msg", "用户名密码不正确");
+            map.put("msgname", "用户名密码不正确");
         }
 
         return map;

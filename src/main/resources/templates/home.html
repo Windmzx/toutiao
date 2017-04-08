@@ -137,10 +137,15 @@
     </div>
 
 
-#if ($pop)
-<script>
-window.loginpop = $!{pop};
-</script>
-#end
+#if($pop && !$user)
+    <script>
+        window.loginpop = $!{pop};
+    </script>
 
+#end
+#if(!$user)
+<p>
+    没登陆
+</p>
+#end
 #parse("footer.html")

@@ -8,8 +8,10 @@ import java.util.Map;
 /**
  * Created by mzx on 17.4.7.
  */
-public class ServiceUtil {
-
+public class ToutiaoUtil {
+    public static final String QINIU_DOMAMIN = "http://oo2o1mw88.bkt.clouddn.com/";
+    public static final String FILE_PATH = "D:\\upload\\";
+    public static final String APP_IMG_PATH = "http://127.0.0.1:8080/images?name=";
 
     public static String getJson(int code) {
         JSONObject jsonObject = new JSONObject();
@@ -28,8 +30,8 @@ public class ServiceUtil {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("code", code);
 
-        for (Map.Entry<String,Object> entry:map.entrySet()){
-            jsonObject.put(entry.getKey(),entry.getValue().toString());
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            jsonObject.put(entry.getKey(), entry.getValue().toString());
         }
         return jsonObject.toJSONString();
     }
@@ -68,5 +70,16 @@ public class ServiceUtil {
         } catch (Exception e) {
             return null;
         }
+    }
+
+
+    private static String FILE_NAME_SET[] = {"jpg", "jpeg", "png", "gif"};
+
+    public static boolean isPictureAccepted(String extname) {
+        for (String s : FILE_NAME_SET) {
+            if (s.equals(extname))
+                return true;
+        }
+        return false;
     }
 }

@@ -1,5 +1,6 @@
 package com.newcoder.configuration;
 
+import com.newcoder.intercepter.LoginRequiredIntercepter;
 import com.newcoder.intercepter.PassportIntercepter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration;
@@ -16,9 +17,14 @@ public class ToutiaoWebConfiguration extends WebMvcAutoConfiguration.WebMvcAutoC
     @Autowired
     PassportIntercepter passportIntercepter;
 
+
+    @Autowired
+    LoginRequiredIntercepter loginRequiredIntercepter;
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(passportIntercepter);
+        registry.addInterceptor(loginRequiredIntercepter).addPathPatterns("/setting");
         super.addInterceptors(registry);
     }
 }

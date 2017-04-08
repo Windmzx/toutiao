@@ -1,7 +1,7 @@
 package com.newcoder.controller;
 
 import com.newcoder.service.UserService;
-import com.newcoder.utils.ServiceUtil;
+import com.newcoder.utils.ToutiaoUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -33,14 +33,21 @@ public class LoginController {
             Cookie cookie = new Cookie("ticket", map.get("ticket").toString());
             cookie.setPath("/");
             response.addCookie(cookie);
-            return ServiceUtil.getJson(0, "登陆成功");
+            return ToutiaoUtil.getJson(0, "登陆成功");
         }
-        return ServiceUtil.getJson(1, map);
+        return ToutiaoUtil.getJson(1, map);
     }
 
     @RequestMapping(path = "/logout", method = {RequestMethod.GET, RequestMethod.POST})
-    public String logout(@CookieValue("ticket") String ticket) {
+    public String logout(@CookieValue("ticket") String ticket, HttpServletResponse response) {
         userService.logout(ticket);
         return "redirect:/";
+    }
+
+    @RequestMapping(path = "/setting", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public String setting() {
+
+        return "setting ok";
     }
 }
