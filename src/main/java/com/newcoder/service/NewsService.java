@@ -23,10 +23,17 @@ public class NewsService {
     @Autowired
     private NewsDAO newsDAO;
 
+    public News getNewsById(int newsId) {
+        return newsDAO.getNews(newsId);
+    }
+
     public List<News> getLastedNews(int id, int offset, int limit) {
         return newsDAO.selectByUserIdAndOffset(id, offset, limit);
     }
 
+    public int updateCommentCount(News news) {
+        return newsDAO.update(news);
+    }
 
     public String saveFile(MultipartFile file) throws IOException {
         //检查文件类型

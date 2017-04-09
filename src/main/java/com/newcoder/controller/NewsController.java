@@ -1,25 +1,26 @@
 package com.newcoder.controller;
 
 import com.newcoder.dao.NewsDAO;
-import com.newcoder.model.HostHolder;
-import com.newcoder.model.News;
+import com.newcoder.model.*;
+import com.newcoder.service.CommentService;
 import com.newcoder.service.NewsService;
 import com.newcoder.service.SaveImageToQiniu;
+import com.newcoder.service.UserService;
 import com.newcoder.utils.ToutiaoUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.StreamUtils;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -34,9 +35,40 @@ public class NewsController {
     @Autowired
     HostHolder hostHolder;
 
+    @Autowired
+    NewsService newsService;
 
     @Autowired
     NewsDAO newsDAO;
+
+    @Autowired
+    UserService userservice;
+
+    @Autowired
+    CommentService commentService;
+
+    @RequestMapping(path = "/news/{newsId}", method = {RequestMethod.POST, RequestMethod.GET})
+    public String getNews(@PathVariable("newsId") int newsId, Model model) {
+        //获取资讯
+        News news = newsService.getNewsById(newsId);
+        User user = userservice.getUser(news.getUserId());
+        model.addAttribute("owner", user);
+        model.addAttribute("news", news);
+        //获取评论
+
+        List<Comment> ls = commentService.getCommentByTypeAndId(newsId, CommentType.ENTY_NEWS);
+        List<ViewObject> ovs = new ArrayList<>();
+
+        for (Comment comment : ls) {
+            ViewObject ov = new ViewObject();
+            ov.set("comment", comment);
+            ov.set("user",userservice.getUser(comment.getUserId()));
+            ovs.add(ov);
+        }
+        model.addAttribute("comments", ovs);
+        return "detail";
+    }
+
 
     @ResponseBody
     @RequestMapping(path = "/uploadImage", method = {RequestMethod.POST})
@@ -64,8 +96,8 @@ public class NewsController {
     @ResponseBody
     @RequestMapping(path = "/addNews", method = {RequestMethod.POST})
     public String addNews(@RequestParam("image") String image,
-                        @RequestParam("title") String title,
-                        @RequestParam("link") String link) {
+                          @RequestParam("title") String title,
+                          @RequestParam("link") String link) {
 
         News news = new News();
         news.setCreatedDate(new Date());

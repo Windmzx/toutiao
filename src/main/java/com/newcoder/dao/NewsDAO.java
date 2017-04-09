@@ -1,9 +1,7 @@
 package com.newcoder.dao;
 
 import com.newcoder.model.News;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -20,9 +18,15 @@ public interface NewsDAO {
     @Insert({"INSERT into ", TABLE_NAME + " (" + INSERT_FIELDS + ") values ( #{title},#{link},#{image},#{likeCount},#{commentCount},#{createdDate},#{userId})"})
     int addNews(News news);
 
+    @Select({"select ", SELECT_FIELDS, " from " + TABLE_NAME + " where id=#{newsId}"})
+    News getNews(int newsId);
+
 
     List<News> selectByUserIdAndOffset(@Param("userId") int userId,
                                        @Param("offset") int offset,
                                        @Param("limit") int limit);
+
+    @Update({"UPDATE ", TABLE_NAME, " set comment_count = #{commentCount} where id=#{id}"})
+    int update(News news);
 
 }
