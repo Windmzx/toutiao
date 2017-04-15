@@ -2,10 +2,7 @@ package com.newcoder.controller;
 
 import com.newcoder.dao.NewsDAO;
 import com.newcoder.model.*;
-import com.newcoder.service.CommentService;
-import com.newcoder.service.NewsService;
-import com.newcoder.service.SaveImageToQiniu;
-import com.newcoder.service.UserService;
+import com.newcoder.service.*;
 import com.newcoder.utils.ToutiaoUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -45,6 +42,8 @@ public class NewsController {
     UserService userservice;
 
     @Autowired
+    LikedService likedService;
+    @Autowired
     CommentService commentService;
 
     @RequestMapping(path = "/news/{newsId}", method = {RequestMethod.POST, RequestMethod.GET})
@@ -54,15 +53,24 @@ public class NewsController {
         User user = userservice.getUser(news.getUserId());
         model.addAttribute("owner", user);
         model.addAttribute("news", news);
-        //获取评论
 
-        List<Comment> ls = commentService.getCommentByTypeAndId(newsId, CommentType.ENTY_NEWS);
+        //登陆的情况下才会显示当前用户的点赞情况
+        User curruser = hostHolder.getUser();
+        if (curruser != null) {
+            int islike = likedService.getLikedStatus(curruser.getId(), EntityType.ENTY_NEWS, news.getId());
+            model.addAttribute("like", islike);
+        }
+
+
+        //获取评论
+        List<Comment> ls = commentService.getCommentByTypeAndId(newsId, EntityType.ENTY_NEWS);
         List<ViewObject> ovs = new ArrayList<>();
 
         for (Comment comment : ls) {
             ViewObject ov = new ViewObject();
             ov.set("comment", comment);
-            ov.set("user",userservice.getUser(comment.getUserId()));
+            ov.set("user", userservice.getUser(comment.getUserId()));
+
             ovs.add(ov);
         }
         model.addAttribute("comments", ovs);

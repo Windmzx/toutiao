@@ -1,10 +1,10 @@
 package com.newcoder.controller;
 
-import com.newcoder.model.News;
-import com.newcoder.model.User;
-import com.newcoder.model.ViewObject;
+import com.newcoder.model.*;
+import com.newcoder.service.LikedService;
 import com.newcoder.service.NewsService;
 import com.newcoder.service.UserService;
+import com.newcoder.utils.RedisKeyUtil;
 import org.omg.PortableServer.LIFESPAN_POLICY_ID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,19 +29,36 @@ public class HomeController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    LikedService likedService;
+
+    @Autowired
+    HostHolder hostHolder;
     String key;
 
     private List<ViewObject> getNews(int userId, int offset, int limit) {
         List<News> news = newsService.getLastedNews(userId, offset, limit);
         List<ViewObject> vos = new ArrayList<>();
 
+        /*
+        vo.like表示用户是否喜欢
+        vo.news.like是真正点赞的人
+         */
+        User curruser = hostHolder.getUser();
         for (News news1 : news) {
             User user = userService.getUser(news1.getUserId());
             ViewObject vo = new ViewObject();
             vo.set("news", news1);
             vo.set("user", userService.getUser(news1.getUserId()));
 
+            //登陆的情况下才会显示当前用户的点赞情况
+            if (curruser != null) {
+                int islike = likedService.getLikedStatus(curruser.getId(), EntityType.ENTY_NEWS, news1.getId());
+                vo.set("like", islike);
+            }
             vos.add(vo);
+            System.out.println("-------------------------");
+            System.out.println(vos);
         }
         return vos;
     }
@@ -49,7 +66,6 @@ public class HomeController {
     @RequestMapping(path = "/user/{userid}")
     public String userIndex(Model model, @PathVariable("userid") int userid) {
         model.addAttribute("vos", getNews(userid, 0, 10));
-
         return "home";
     }
 

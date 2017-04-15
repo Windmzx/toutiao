@@ -1,9 +1,11 @@
 package com.newcoder;
 
 import com.newcoder.dao.LoginTicketDAO;
+import com.newcoder.dao.MessageDAO;
 import com.newcoder.dao.NewsDAO;
 import com.newcoder.dao.UserDAO;
 import com.newcoder.model.LoginTicket;
+import com.newcoder.model.Message;
 import com.newcoder.model.News;
 import com.newcoder.model.User;
 import org.junit.Assert;
@@ -13,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.util.Date;
 import java.util.Random;
@@ -23,6 +26,7 @@ import java.util.Random;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = ToutiaoApplication.class)
+@WebAppConfiguration
 @Sql("/init-schema.sql")
 public class InitDbTest {
 
@@ -35,6 +39,9 @@ public class InitDbTest {
     @Autowired
     LoginTicketDAO loginTicketDAO;
 
+
+    @Autowired
+    MessageDAO messageDAO;
     @Test
     public void contextLoads() {
         Random r = new Random();
@@ -73,6 +80,14 @@ public class InitDbTest {
             loginTicketDAO.insert(loginTicket);
 
         }
+        Message message=new Message();
+        message.setContent("nihaoma");
+        message.setConversationId("123");
+        message.setCreatedDate(new Date());
+        message.setHasRead(0);
+        message.setFromId(1);
+        message.setToId(3);
+        messageDAO.addMessage(message);
 
         LoginTicket loginTicket = loginTicketDAO.selectByTicket("abcdefg2");
         loginTicket.setStatus(2);

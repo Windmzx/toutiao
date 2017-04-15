@@ -13,7 +13,6 @@ import java.util.*;
 /**
  * Created by mzx on 17.4.6.
  */
-
 public class IndexController {
     @RequestMapping(path = {"/", "index"})
     @ResponseBody

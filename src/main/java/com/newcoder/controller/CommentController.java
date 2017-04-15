@@ -2,7 +2,7 @@ package com.newcoder.controller;
 
 import com.newcoder.dao.NewsDAO;
 import com.newcoder.model.Comment;
-import com.newcoder.model.CommentType;
+import com.newcoder.model.EntityType;
 import com.newcoder.model.HostHolder;
 import com.newcoder.model.News;
 import com.newcoder.service.CommentService;
@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 /**
@@ -34,10 +36,12 @@ public class CommentController {
     NewsService newsService;
 
     @RequestMapping(path = "addComment", method = {RequestMethod.POST})
-    public String addComment(@RequestParam("newsId") int newsId, @RequestParam("content") String content) {
+    public String addComment(@RequestParam("newsId") int newsId, @RequestParam("content") String content, HttpServletRequest request) {
+        String res = request.getHeader("Referer");
+        System.out.println(res+"＿＿＿＿＿＿＿＿＿＿＿＿＿＿＋＋＋＋＋＋＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿");
         Comment comment = new Comment();
         comment.setStatus(1);
-        comment.setEntityType(CommentType.ENTY_NEWS);
+        comment.setEntityType(EntityType.ENTY_NEWS);
         comment.setCreatedDate(new Date());
         int userid = hostHolder.getUser().getId();
         comment.setUserId(userid);
@@ -50,6 +54,6 @@ public class CommentController {
         news.setCommentCount(news.getCommentCount() + 1);
         newsService.updateCommentCount(news);
 
-        return "";
+        return "redirect:"+res;
     }
 }

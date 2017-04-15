@@ -32,7 +32,11 @@ public class NewsService {
     }
 
     public int updateCommentCount(News news) {
-        return newsDAO.update(news);
+        return newsDAO.updateCommentCount(news);
+    }
+
+    public int updateLikedCount(int id,int likeCount){
+        return newsDAO.updateLikeCount(id, likeCount);
     }
 
     public String saveFile(MultipartFile file) throws IOException {
