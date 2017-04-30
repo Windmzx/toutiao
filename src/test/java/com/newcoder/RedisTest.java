@@ -18,6 +18,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 public class RedisTest {
 
     @Autowired
+    private
     JedisAdapter jedisAdapter;
 
 
@@ -30,7 +31,6 @@ public class RedisTest {
 
         User user2;
         user2 = jedisAdapter.getObject("user1", User.class);
-        System.out.println(user2);
 
     }
 }

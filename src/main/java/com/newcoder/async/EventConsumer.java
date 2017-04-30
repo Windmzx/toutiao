@@ -22,9 +22,10 @@ import java.util.Map;
 public class EventConsumer implements InitializingBean, ApplicationContextAware {
 
     @Autowired
+    private
     JedisAdapter jedisAdapter;
     private ApplicationContext applicationContext;
-    private Map<EventType, List<EventHandler>> eventHandlerRouter = new HashMap<>();
+    private final Map<EventType, List<EventHandler>> eventHandlerRouter = new HashMap<>();
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -40,7 +41,7 @@ public class EventConsumer implements InitializingBean, ApplicationContextAware 
                 List<EventType> eventTypes = entry.getValue().getSupportEnvenType();
                 for (EventType type : eventTypes) {
                     if (!eventHandlerRouter.containsKey(type)) {
-                        eventHandlerRouter.put(type, new ArrayList<EventHandler>());
+                        eventHandlerRouter.put(type, new ArrayList<>());
                     }
 
                     eventHandlerRouter.get(type).add(entry.getValue());
@@ -48,29 +49,21 @@ public class EventConsumer implements InitializingBean, ApplicationContextAware 
             }
         }
 
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //一直运行
-                while (true) {
-                    String key = RedisKeyUtil.getEventQueueKey();
+        Thread thread = new Thread(() -> {
+            //一直运行
+            while (true) {
+                String key = RedisKeyUtil.getEventQueueKey();
 
-                    List<String> events = jedisAdapter.brpop(0, key);
+                List<String> events = jedisAdapter.brpop(0, key);
 
-                    System.out.println("----------------------取出了消息----------------------------");
-                    for (String message : events) {
-                        if (message.equals(key)){
-                            System.out.println("哈哈死在这里了");
-                            continue;
-                        }
-                        EventModel eventModel = JSONObject.parseObject(message, EventModel.class);
-                        if (eventHandlerRouter.containsKey(eventModel.getType())) {
-                            for (EventHandler eventHandler : eventHandlerRouter.get(eventModel.getType())) {
-                                System.out.println("----------------------解析了消息----------------------------");
-                                eventHandler.doHandle();
-                            }
-                        } else {
-                            continue;
+                for (String message : events) {
+                    if (message.equals(key)) {
+                        continue;
+                    }
+                    EventModel eventModel = JSONObject.parseObject(message, EventModel.class);
+                    if (eventHandlerRouter.containsKey(eventModel.getType())) {
+                        for (EventHandler eventHandler : eventHandlerRouter.get(eventModel.getType())) {
+                            eventHandler.doHandle(eventModel);
                         }
                     }
                 }

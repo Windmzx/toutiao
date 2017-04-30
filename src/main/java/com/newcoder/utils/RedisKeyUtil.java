@@ -4,10 +4,10 @@ package com.newcoder.utils;
  * Created by mzx on 17.4.14.
  */
 public class RedisKeyUtil {
-    private static String SPLIT = ":";
+    private static final String SPLIT = ":";
     private static String LIKE = "LIKE";
-    private static String DIS_LIKE = "DISLIKE";
-    private static String EVENT = "EVENT";
+    private static final String DIS_LIKE = "DISLIKE";
+    private static final String EVENT = "EVENT";
 
     public static String getLikeKey(int entityTye, int entityId) {
         return LIKE + SPLIT + String.valueOf(entityTye) + SPLIT + String.valueOf(entityId);

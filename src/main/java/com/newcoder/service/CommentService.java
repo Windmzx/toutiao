@@ -15,6 +15,7 @@ import java.util.List;
 public class CommentService {
 
     @Autowired
+    private
     CommentDAO commentDao;
 
     public List<Comment> getCommentByTypeAndId(int id, int type) {

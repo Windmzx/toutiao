@@ -13,13 +13,13 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 public class ControllerAspect {
-    private Logger logger = LoggerFactory.getLogger(ControllerAspect.class);
+    private final Logger logger = LoggerFactory.getLogger(ControllerAspect.class);
 
     @Before("execution(* com.newcoder.controller.HomeController.*(..) )")
     public void printParam(JoinPoint joinPoint) {
         StringBuilder sb = new StringBuilder();
         for (Object o : joinPoint.getArgs()) {
-            sb.append("arg:" + o.toString() + "|");
+            sb.append("arg:").append(o.toString()).append("|");
         }
         logger.info(sb.toString());
 

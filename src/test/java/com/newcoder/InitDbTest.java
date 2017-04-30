@@ -31,16 +31,20 @@ import java.util.Random;
 public class InitDbTest {
 
     @Autowired
+    private
     UserDAO userDAO;
 
     @Autowired
+    private
     NewsDAO newsDAO;
 
     @Autowired
+    private
     LoginTicketDAO loginTicketDAO;
 
 
     @Autowired
+    private
     MessageDAO messageDAO;
     @Test
     public void contextLoads() {

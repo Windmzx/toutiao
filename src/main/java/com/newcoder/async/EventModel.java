@@ -76,6 +76,6 @@ public class EventModel {
     }
 
 
-    private Map<String, String> exts = new HashMap<>();
+    private final Map<String, String> exts = new HashMap<>();
 
 }

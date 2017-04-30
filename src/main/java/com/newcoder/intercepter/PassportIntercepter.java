@@ -22,13 +22,16 @@ import java.util.Date;
 public class PassportIntercepter implements HandlerInterceptor {
 
     @Autowired
+    private
     LoginTicketDAO loginTicketDAO;
 
     @Autowired
+    private
     UserDAO userDAO;
 
 
     @Autowired
+    private
     HostHolder hostHolder;
 
     @Override

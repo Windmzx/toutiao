@@ -7,14 +7,10 @@ import com.newcoder.utils.ToutiaoUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.HtmlUtils;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,23 +23,30 @@ import java.util.UUID;
 public class NewsController {
 
     @Autowired
+    private
     SaveImageToQiniu saveFile;
 
     @Autowired
+    private
     HostHolder hostHolder;
 
     @Autowired
+    private
     NewsService newsService;
 
     @Autowired
+    private
     NewsDAO newsDAO;
 
     @Autowired
+    private
     UserService userservice;
 
     @Autowired
+    private
     LikedService likedService;
     @Autowired
+    private
     CommentService commentService;
 
     @RequestMapping(path = "/news/{newsId}", method = {RequestMethod.POST, RequestMethod.GET})
@@ -91,12 +94,11 @@ public class NewsController {
         }
         //
         String filename = UUID.randomUUID().toString().replaceAll("-", "") + "." + fileExt;
-
-        String s = saveFile.sace(file, filename);
+        String s = saveFile.save(file, filename);
         if (s == null) {
             ToutiaoUtil.getJson(1, "图片上传失败 请检查你的文件类型");
         }
-        return ToutiaoUtil.getJson(0, ToutiaoUtil.QINIU_DOMAMIN + s);
+        return ToutiaoUtil.getJson(0, ToutiaoUtil.QINIU_DOMAMIN + "/" + s);
 
 
     }
@@ -111,26 +113,26 @@ public class NewsController {
         news.setCreatedDate(new Date());
         news.setImage(image);
         news.setUserId(hostHolder.getUser().getId());
-        news.setTitle(title);
-        news.setLink(link);
+        news.setTitle(HtmlUtils.htmlEscape(title));
+        news.setLink(HtmlUtils.htmlEscape(link));
         news.setCommentCount(0);
         news.setLikeCount(0);
         newsDAO.addNews(news);
         return ToutiaoUtil.getJson(0);
     }
 
-    @RequestMapping(path = "/images", method = {RequestMethod.GET})
-    @ResponseBody
-    public void showinage(@RequestParam("name") String filename, HttpServletResponse response) {
-        response.setContentType("image");
-
-        try {
-            StreamUtils.copy(new FileInputStream(new File(ToutiaoUtil.FILE_PATH + filename)), response.getOutputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-    }
+//    @RequestMapping(path = "/images", method = {RequestMethod.GET})
+//    @ResponseBody
+//    public void showinage(@RequestParam("name") String filename, HttpServletResponse response) {
+//        response.setContentType("image");
+//
+//        try {
+//            StreamUtils.copy(new FileInputStream(new File(ToutiaoUtil.FILE_PATH + filename)), response.getOutputStream());
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//
+//    }
 
 }

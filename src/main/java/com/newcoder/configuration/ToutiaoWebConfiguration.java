@@ -15,16 +15,26 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 public class ToutiaoWebConfiguration extends WebMvcAutoConfiguration.WebMvcAutoConfigurationAdapter {
 
     @Autowired
+    private
     PassportIntercepter passportIntercepter;
 
 
     @Autowired
+    private
     LoginRequiredIntercepter loginRequiredIntercepter;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(passportIntercepter);
-        registry.addInterceptor(loginRequiredIntercepter).addPathPatterns("/setting");
+        registry.addInterceptor(loginRequiredIntercepter)
+                .addPathPatterns("/setting",
+                        "/addComment",
+                        "/like",
+                        "/dislike",
+                        "/getMessage",
+                        "/getConversationList",
+                        "/addMessage",
+                        "/addNews");
         super.addInterceptors(registry);
     }
 }

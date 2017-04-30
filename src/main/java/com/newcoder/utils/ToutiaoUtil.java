@@ -9,9 +9,9 @@ import java.util.Map;
  * Created by mzx on 17.4.7.
  */
 public class ToutiaoUtil {
-    public static final String QINIU_DOMAMIN = "http://oo2o1mw88.bkt.clouddn.com/";
-    public static final String FILE_PATH = "D:\\upload\\";
-    public static final String APP_IMG_PATH = "http://127.0.0.1:8080/images?name=";
+    public static final String QINIU_DOMAMIN = "http://image.mengzhexin.com";
+    // public static final String FILE_PATH = "D:\\upload\\";
+    //public static final String APP_IMG_PATH = "/images?name=";
 
     public static String getJson(int code) {
         JSONObject jsonObject = new JSONObject();
@@ -37,7 +37,7 @@ public class ToutiaoUtil {
     }
 
 
-    public final static String MD5(String pwd) {
+    public static String MD5(String pwd) {
         //用于加密的字符
         char md5String[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
                 'A', 'B', 'C', 'D', 'E', 'F'};
@@ -58,8 +58,7 @@ public class ToutiaoUtil {
             int j = md.length;
             char str[] = new char[j * 2];
             int k = 0;
-            for (int i = 0; i < j; i++) {   //  i = 0
-                byte byte0 = md[i];  //95
+            for (byte byte0 : md) {   //  i = 0
                 str[k++] = md5String[byte0 >>> 4 & 0xf];    //    5
                 str[k++] = md5String[byte0 & 0xf];   //   F
             }
@@ -73,7 +72,7 @@ public class ToutiaoUtil {
     }
 
 
-    private static String FILE_NAME_SET[] = {"jpg", "jpeg", "png", "gif"};
+    private static final String[] FILE_NAME_SET = {"jpg", "jpeg", "png", "gif"};
 
     public static boolean isPictureAccepted(String extname) {
         for (String s : FILE_NAME_SET) {

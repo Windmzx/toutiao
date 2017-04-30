@@ -9,17 +9,12 @@ import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.model.DefaultPutRet;
 import com.qiniu.util.Auth;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.EnvironmentAware;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
-/**
- * Created by mzx on 17.4.8.
- */
+
 @Service
 public class SaveImageToQiniu {
 
@@ -30,12 +25,11 @@ public class SaveImageToQiniu {
     @Value("${bucket}")
     String bucket;
 
-    public String sace(MultipartFile file, String filename) {
+    public String save(MultipartFile file, String filename) {
         Configuration cfg = new Configuration(Zone.zone2());
 
         UploadManager uploadManager = new UploadManager(cfg);
-        System.out.println(accessKey);
-        System.out.println(secretKey);
+
         Auth auth = Auth.create(accessKey, secretKey);
         String upToken = auth.uploadToken(bucket);
         try {

@@ -20,19 +20,23 @@ import org.springframework.web.bind.annotation.*;
 public class LikeController {
 
     @Autowired
+    private
     HostHolder hostHolder;
 
     @Autowired
+    private
     LikedService likedService;
 
     @Autowired
+    private
     NewsService newsService;
 
     @Autowired
+    private
     EventProducer eventProducer;
 
 
-    @RequestMapping(path = {"/like"},method = {RequestMethod.POST})
+    @RequestMapping(path = {"/like"}, method = {RequestMethod.POST})
     @ResponseBody
     public String like(@RequestParam("newsId") int newsId) {
         int userId = hostHolder.getUser().getId();
@@ -42,11 +46,11 @@ public class LikeController {
         eventProducer.fireEvent(new EventModel(EventType.LIKE)
                 .setEntityOwener(news.getUserId())
                 .setActorid(hostHolder.getUser().getId()).setEntityId(newsId));
-        System.out.println("产生了一条消息");
+
         return ToutiaoUtil.getJson(0, String.valueOf(likeCount));
     }
 
-    @RequestMapping(path = "/dislike",method = {RequestMethod.POST})
+    @RequestMapping(path = "/dislike", method = {RequestMethod.POST})
     @ResponseBody
     public String dislike(@RequestParam("newsId") int newsId) {
         int userId = hostHolder.getUser().getId();

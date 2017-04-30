@@ -4,17 +4,11 @@ import com.newcoder.model.*;
 import com.newcoder.service.LikedService;
 import com.newcoder.service.NewsService;
 import com.newcoder.service.UserService;
-import com.newcoder.utils.RedisKeyUtil;
-import org.omg.PortableServer.LIFESPAN_POLICY_ID;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.EnvironmentAware;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,15 +18,19 @@ import java.util.List;
 @Controller
 public class HomeController {
     @Autowired
+    private
     NewsService newsService;
 
     @Autowired
+    private
     UserService userService;
 
     @Autowired
+    private
     LikedService likedService;
 
     @Autowired
+    private
     HostHolder hostHolder;
     String key;
 
@@ -57,8 +55,6 @@ public class HomeController {
                 vo.set("like", islike);
             }
             vos.add(vo);
-            System.out.println("-------------------------");
-            System.out.println(vos);
         }
         return vos;
     }

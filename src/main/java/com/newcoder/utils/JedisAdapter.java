@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -16,7 +15,7 @@ import java.util.List;
  */
 @Service
 public class JedisAdapter implements InitializingBean {
-    public static final Logger logger = LoggerFactory.getLogger(JedisAdapter.class);
+    private static final Logger logger = LoggerFactory.getLogger(JedisAdapter.class);
     private JedisPool jedisPool = null;
 
     @Override
@@ -42,46 +41,34 @@ public class JedisAdapter implements InitializingBean {
     }
 
     public long srem(String key, String value) {
-        Jedis jedis = null;
-        try {
-            jedis = jedisPool.getResource();
+        try (Jedis jedis = jedisPool.getResource()) {
             return jedis.srem(key, value);
         } catch (Exception e) {
             logger.error(e.getMessage());
             return 0;
-        } finally {
-            jedis.close();
         }
     }
 
 
     public boolean sismember(String key, String value) {
-        Jedis jedis = null;
-        try {
-            jedis = jedisPool.getResource();
+        try (Jedis jedis = jedisPool.getResource()) {
             return jedis.sismember(key, value);
         } catch (Exception e) {
             logger.error(e.getMessage());
             return false;
-        } finally {
-            jedis.close();
         }
     }
 
     public long scard(String key, String value) {
-        Jedis jedis = null;
-        try {
-            jedis = jedisPool.getResource();
+        try (Jedis jedis = jedisPool.getResource()) {
             return jedis.scard(key);
         } catch (Exception e) {
             logger.error(e.getMessage());
             return 0;
-        } finally {
-            jedis.close();
         }
     }
 
-    public String get(String key) {
+    private String get(String key) {
         Jedis jedis = null;
         try {
             jedis = jedisPool.getResource();
@@ -96,7 +83,7 @@ public class JedisAdapter implements InitializingBean {
         }
     }
 
-    public void set(String key, String value) {
+    private void set(String key, String value) {
         Jedis jedis = null;
         try {
             jedis = jedisPool.getResource();

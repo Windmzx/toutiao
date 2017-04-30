@@ -9,11 +9,7 @@
                 <div class="letter-info">
                     <span class="l-time">$date.format('yyyy-MM-dd HH:mm:ss', $!{conversation.conversation.createdDate})</span>
                     <div class="l-operate-bar">
-                        <!--
-                        <a href="javascript:void(0);" class="sns-action-del" data-id="">
-                        删除
-                        </a>
-                        -->
+
                         <a href="/getMessage?conversationId=$!{conversation.conversation.conversationId}">
                             共$!{conversation.conversation.id}条会话
                         </a>
@@ -69,15 +65,6 @@
                     });
                 });
 
-                // $(window).on('touchmove scroll', function() {
-                //   if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-                //     $('div.backdrop').show();
-                //     $('div.share-help').show();
-                //   } else {
-                //     $('div.backdrop').hide();
-                //     $('div.share-help').hide();
-                //   }
-                // });
 
             });
 

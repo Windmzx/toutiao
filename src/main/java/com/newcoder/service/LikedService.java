@@ -8,9 +8,11 @@ import org.springframework.stereotype.Service;
 /**
  * Created by mzx on 17.4.14.
  */
+@SuppressWarnings("JavaDoc")
 @Service
 public class LikedService {
     @Autowired
+    private
     JedisAdapter jedisAdapter;
 
     /**

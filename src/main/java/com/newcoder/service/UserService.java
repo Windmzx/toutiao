@@ -1,6 +1,9 @@
 package com.newcoder.service;
 
 
+import com.newcoder.async.EventModel;
+import com.newcoder.async.EventProducer;
+import com.newcoder.async.EventType;
 import com.newcoder.dao.LoginTicketDAO;
 import com.newcoder.dao.UserDAO;
 import com.newcoder.model.LoginTicket;
@@ -11,10 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by nowcoder on 2016/7/2.
@@ -27,14 +27,18 @@ public class UserService {
     private UserDAO userDAO;
 
     @Autowired
+    private
     LoginTicketDAO loginTicketDAO;
+
+    @Autowired
+    EventProducer eventProducer;
 
     public User getUser(int id) {
         return userDAO.selectById(id);
     }
 
     public Map<String, Object> register(String username, String password, int rember) {
-        Map<String, Object> map = new HashedMap();
+        Map<String, Object> map = new HashMap();
 
         if (StringUtils.isEmpty(username)) {
             map.put("msgname", "用户名不能为空");
@@ -62,9 +66,15 @@ public class UserService {
 
         userDAO.addUser(user);
 
+        EventModel eventModel = new EventModel(EventType.REGISTER);
+        eventModel.setEntityOwener(user.getId());
+        eventProducer.fireEvent(eventModel);
         Date date = new Date();
         if (rember > 0) {
             date.setTime(date.getTime() + 1000 * 36000 * 24 * 5);
+        } else {
+            //不记住密码则只有一天的有效期
+            date.setTime(date.getTime() + 1000 * 36000 * 24 * 1);
         }
 
         LoginTicket ticket = new LoginTicket();
@@ -100,7 +110,7 @@ public class UserService {
             return map;
         }
         //验证密码
-        if (ToutiaoUtil.MD5(password + user.getSalt()).equals(user.getPassword())) {
+        if (Objects.equals(ToutiaoUtil.MD5(password + user.getSalt()), user.getPassword())) {
             //密码正确 生成ticket
 
 
@@ -108,7 +118,7 @@ public class UserService {
             if (rember > 0) {
                 date.setTime(date.getTime() + 1000 * 36000 * 24 * 5);
             }
-
+            date.setTime(date.getTime() + 1000 * 36000 * 24 * 1);
             LoginTicket ticket = new LoginTicket();
             ticket.setUserId(user.getId());
             ticket.setExpired(date);

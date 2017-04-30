@@ -8,9 +8,6 @@ import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
-/**
- * Created by mzx on 17.4.9.
- */
 
 @Mapper
 public interface CommentDAO {

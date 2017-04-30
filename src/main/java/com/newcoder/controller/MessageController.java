@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.util.HtmlUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -25,20 +26,23 @@ import java.util.List;
 @Controller
 public class MessageController {
     @Autowired
+    private
     UserService userService;
 
     @Autowired
+    private
     HostHolder hostHolder;
     @Autowired
+    private
     MessageService messageService;
 
     @RequestMapping(path = {"/getMessage"}, method = {RequestMethod.GET})
     public String getMessage(Model model, @RequestParam("conversationId") String consersation) {
-        System.out.println(consersation);
+
         List<Message> messages = messageService.getMessageOfConversation(consersation, 0, 10);
 
         List<ViewObject> vos = new ArrayList<>();
-        System.out.println(messages.size());
+
         for (Message message : messages) {
             ViewObject viewObject = new ViewObject();
             viewObject.set("message", message);
@@ -88,12 +92,13 @@ public class MessageController {
         int fromId = 0;
         if (hostHolder.getUser() != null) {
             fromId = hostHolder.getUser().getId();
-
         }
         Message message = new Message();
         message.setToId(toid);
         message.setFromId(fromId);
-        message.setContent(content);
+
+        message.setContent(HtmlUtils.htmlEscape(content));
+
         message.setConversationId(fromId > toid ? String.format("%d_%d", fromId, toid) : String.format("%d_%d", toid, fromId));
         message.setCreatedDate(new Date());
         try {

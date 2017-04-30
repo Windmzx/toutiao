@@ -1,5 +1,9 @@
 package com.newcoder.controller;
 
+import com.newcoder.async.EventModel;
+import com.newcoder.async.EventProducer;
+import com.newcoder.async.EventType;
+import com.newcoder.model.EntityType;
 import com.newcoder.service.UserService;
 import com.newcoder.utils.ToutiaoUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +24,9 @@ import java.util.Map;
 public class RegisterController {
 
     @Autowired
-    UserService userService;
-
+    private UserService userService;
+    @Autowired
+    private EventProducer eventProducer;
 
     @ResponseBody
     @RequestMapping(path = "/register", method = {RequestMethod.GET, RequestMethod.POST})
@@ -36,6 +41,8 @@ public class RegisterController {
                 Cookie cookie = new Cookie("ticket", map.get("ticket").toString());
                 cookie.setPath("/");
                 response.addCookie(cookie);
+
+
                 return ToutiaoUtil.getJson(0, "注册成功");
             } else {
                 return ToutiaoUtil.getJson(1, map);

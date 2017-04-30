@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class HostHolder {
-    private static ThreadLocal<User> users = new ThreadLocal<>();
+    private static final ThreadLocal<User> users = new ThreadLocal<>();
 
     public User getUser(){
         return users.get();
